@@ -2,283 +2,141 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hen Do — Plan</title>
+    <meta name="view-transition" content="same-origin" />
+    <title>Hen Do Hub</title>
 
-    <!-- Tailwind CDN (no build step) -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-      /* Small extras for polish */
       .glass {
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        background: rgba(2, 6, 23, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
       }
       .reveal {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(10px);
         transition: opacity 600ms ease, transform 600ms ease;
       }
       .reveal.show {
         opacity: 1;
         transform: translateY(0);
       }
+
+      /* Make anchor jumps not hide under sticky header (mobile-safe) */
+      :root { --nav-h: 76px; }
+      section { scroll-margin-top: calc(var(--nav-h) + 16px); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal { transition: none; transform: none; opacity: 1; }
+      }
     </style>
   </head>
 
   <body class="min-h-screen bg-slate-950 text-slate-100">
-    <!-- Background -->
+    <!-- Hero background image -->
     <div class="fixed inset-0 -z-10">
-      <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-700/30 via-slate-950 to-cyan-600/20"></div>
-      <div class="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,.15)_1px,transparent_0)] [background-size:24px_24px]"></div>
+      <!-- Replace with your own hero image -->
+      <img
+        src="./assets/hero.jpg"
+        alt=""
+        class="h-full w-full object-cover opacity-70"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/70 to-slate-950"></div>
+      <div class="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,.16)_1px,transparent_0)] [background-size:26px_26px]"></div>
     </div>
 
-    <!-- Top nav -->
-    <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/60 backdrop-blur">
-      <nav class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+    <!-- Nav -->
+    <header class="sticky top-0 z-50">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <a href="./" class="flex items-center gap-2">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10">✨</span>
+          <span class="text-lg font-semibold tracking-tight">Hen Do Hub</span>
+        </a>
+
+        <div class="hidden items-center gap-7 text-sm text-slate-200 md:flex">
+          <a class="hover:text-white/95" href="./timeline.html">Timeline</a>
+          <a class="hover:text-white/95" href="./stay.html">Stay</a>
+          <a class="hover:text-white/95" href="./info.html">Info</a>
+          <a class="hover:text-white/95" href="./faq.html">FAQ</a>
+        </div>
+
         <div class="flex items-center gap-2">
-          <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/10">✨</span>
-          <span class="font-semibold">Hen Do Hub</span>
+          <a href="./timeline.html" class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15">
+            See plan
+          </a>
+
+          <!-- Mobile menu button -->
+          <button
+            class="md:hidden rounded-2xl bg-white/10 px-3 py-2 text-sm hover:bg-white/15"
+            onclick="toggleMenu()"
+            aria-label="Menu"
+          >
+            ☰
+          </button>
         </div>
-        <div class="hidden gap-5 text-sm text-slate-200 md:flex">
-          <a href="#info" class="hover:text-white">Info</a>
-          <a href="#timeline" class="hover:text-white">Timeline</a>
-          <a href="#stay" class="hover:text-white">Accommodation</a>
-          <a href="#faq" class="hover:text-white">FAQ</a>
-        </div>
-        <a
-          href="#timeline"
-          class="rounded-xl bg-white/10 px-3 py-2 text-sm hover:bg-white/15"
-        >See the plan</a>
       </nav>
+
+      <!-- Mobile dropdown -->
+      <div id="mobileMenu" class="mx-auto hidden max-w-6xl px-4 pb-4 md:hidden">
+        <div class="glass rounded-3xl p-3">
+          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./timeline.html">Timeline</a>
+          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./stay.html">Stay</a>
+          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./info.html">Info</a>
+          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./faq.html">FAQ</a>
+        </div>
+      </div>
     </header>
 
-    <main class="mx-auto max-w-5xl px-4">
-      <!-- Hero -->
-      <section class="py-14 md:py-20">
-        <div class="glass reveal rounded-3xl p-8 md:p-12 shadow-xl shadow-black/30">
-          <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p class="text-sm text-slate-300">📍 <span id="city">City</span> • 🗓️ <span id="date">Saturday, 00 Month 2026</span></p>
-              <h1 class="mt-2 text-3xl font-bold tracking-tight md:text-5xl">
-                <span class="text-white">Bride Name</span>’s Hen Do
-              </h1>
-              <p class="mt-3 max-w-2xl text-slate-200">
-                Everything in one place: what’s happening, where to go, and what to bring.
-              </p>
-            </div>
-            <div class="flex gap-2">
-              <button
-                class="rounded-full bg-white/20 px-5 py-3 text-sm backdrop-blur hover:bg-white/30"
-                onclick="scrollToSection('timeline')"
-              >Timeline</button>
-              <button
-                class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                onclick="copyText(document.getElementById('whatsappLink').textContent)"
-              >Copy WhatsApp link</button>
-            </div>
-          </div>
+    <!-- Hero content -->
+    <main class="mx-auto max-w-6xl px-4 pt-10 md:pt-16">
+      <section class="reveal">
+        <div class="glass rounded-[2rem] p-8 md:p-12 shadow-xl shadow-black/30">
+          <p class="text-sm text-slate-300">📍 City • 🗓️ Saturday, 00 Month 2026</p>
+          <h1 class="mt-3 text-4xl font-bold tracking-tight md:text-6xl">
+            A minimal plan.<br class="hidden md:block" />
+            Maximum chaos ✨
+          </h1>
+          <p class="mt-4 max-w-2xl text-slate-200">
+            Everything you need for the day — timeline, accommodation, key info, and links — in one clean hub.
+          </p>
 
-          <div class="mt-8 grid gap-4 md:grid-cols-3">
-            <div class="glass rounded-2xl p-5">
-              <p class="text-xs uppercase tracking-wide text-slate-300">Meet</p>
-              <p class="mt-2 text-lg font-semibold">14:00 — Central Station</p>
-              <p class="mt-1 text-sm text-slate-200">Look for the ✨ squad.</p>
-            </div>
-            <div class="glass rounded-2xl p-5">
-              <p class="text-xs uppercase tracking-wide text-slate-300">Theme</p>
-              <p class="mt-2 text-lg font-semibold">Disco / Sparkly</p>
-              <p class="mt-1 text-sm text-slate-200">Comfortable shoes advised.</p>
-            </div>
-            <div class="glass rounded-2xl p-5">
-              <p class="text-xs uppercase tracking-wide text-slate-300">Group chat</p>
-              <p class="mt-2 text-sm text-slate-200 break-all" id="whatsappLink">
-                https://chat.whatsapp.com/your-invite-link
-              </p>
-            </div>
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <a href="./timeline.html" class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 hover:opacity-95">
+              Open timeline
+            </a>
+            <a href="./stay.html" class="rounded-2xl bg-white/10 px-5 py-3 text-sm font-semibold hover:bg-white/15">
+              View accommodation
+            </a>
           </div>
         </div>
       </section>
 
-      <!-- Info -->
-      <section id="info" class="py-10">
-        <h2 class="reveal text-2xl font-bold">Key info</h2>
-        <div class="mt-5 grid gap-4 md:grid-cols-2">
-          <div class="glass reveal rounded-3xl p-6">
-            <h3 class="font-semibold">What to bring</h3>
-            <ul class="mt-3 list-disc space-y-2 pl-5 text-slate-200">
-              <li>ID + payment method</li>
-              <li>Comfortable shoes</li>
-              <li>Something warm (evenings)</li>
-              <li>Optional: glitter (responsibly)</li>
-            </ul>
-          </div>
-          <div class="glass reveal rounded-3xl p-6">
-            <h3 class="font-semibold">Emergency / organiser</h3>
-            <p class="mt-3 text-slate-200">
-              <span class="font-medium text-white">Name:</span> You<br/>
-              <span class="font-medium text-white">Phone:</span>
-              <span id="phone">+32 000 000 000</span>
-            </p>
-            <div class="mt-4 flex gap-2">
-              <button class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15" onclick="copyText(document.getElementById('phone').textContent)">
-                Copy phone
-              </button>
-              <a class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15" href="tel:+32000000000">
-                Call
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Timeline -->
-      <section id="timeline" class="py-10">
-        <div class="flex items-end justify-between gap-3">
-          <h2 class="reveal text-2xl font-bold">Timeline</h2>
-          <p class="reveal text-sm text-slate-300">Times are a guide — we’ll keep it fun & flexible.</p>
+      <!-- Quick cards -->
+      <section class="mt-8 grid gap-4 md:grid-cols-3">
+        <div class="glass reveal rounded-3xl p-6">
+          <p class="text-xs uppercase tracking-wide text-slate-300">Meet</p>
+          <p class="mt-2 text-lg font-semibold">14:00 — Central Station</p>
+          <p class="mt-1 text-sm text-slate-200">Look for the ✨ squad.</p>
         </div>
 
-        <div class="mt-6 relative">
-          <!-- vertical line -->
-          <div class="absolute left-4 top-0 h-full w-px bg-white/15 md:left-1/2"></div>
-
-          <div class="space-y-6">
-            <!-- Item -->
-            <div class="reveal relative md:grid md:grid-cols-2 md:gap-8">
-              <div class="md:text-right md:pr-10">
-                <p class="text-sm text-slate-300">14:00</p>
-                <h3 class="text-lg font-semibold">Meet-up</h3>
-                <p class="text-slate-200">Central Station — grab a coffee + hugs.</p>
-              </div>
-
-              <div class="mt-3 md:mt-0 md:pl-10">
-                <div class="glass rounded-3xl p-5">
-                  <p class="text-sm text-slate-200">
-                    Tip: Be on time-ish — we’ll do a quick headcount then move.
-                  </p>
-                </div>
-              </div>
-
-              <div class="absolute left-4 top-2 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2"></div>
-            </div>
-
-            <div class="reveal relative md:grid md:grid-cols-2 md:gap-8">
-              <div class="md:order-2 md:pl-10">
-                <p class="text-sm text-slate-300">15:30</p>
-                <h3 class="text-lg font-semibold">Activity</h3>
-                <p class="text-slate-200">Escape room / cocktails / etc.</p>
-              </div>
-
-              <div class="mt-3 md:mt-0 md:order-1 md:pr-10 md:text-right">
-                <div class="glass rounded-3xl p-5">
-                  <p class="text-sm text-slate-200">
-                    Location: <span class="font-medium text-white">Venue Name</span><br/>
-                    Address: <span id="venueAddress">Street 1, City</span>
-                  </p>
-                  <div class="mt-3 flex md:justify-end gap-2">
-                    <button class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                      onclick="copyText(document.getElementById('venueAddress').textContent)">Copy address</button>
-                    <a class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                      href="https://www.google.com/maps" target="_blank" rel="noreferrer">Open maps</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="absolute left-4 top-2 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2"></div>
-            </div>
-
-            <div class="reveal relative md:grid md:grid-cols-2 md:gap-8">
-              <div class="md:text-right md:pr-10">
-                <p class="text-sm text-slate-300">19:00</p>
-                <h3 class="text-lg font-semibold">Dinner</h3>
-                <p class="text-slate-200">Reservation under “Bride Name”.</p>
-              </div>
-
-              <div class="mt-3 md:mt-0 md:pl-10">
-                <div class="glass rounded-3xl p-5">
-                  <p class="text-sm text-slate-200">
-                    Food notes: allergies? message the organiser.
-                  </p>
-                </div>
-              </div>
-
-              <div class="absolute left-4 top-2 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2"></div>
-            </div>
-
-            <div class="reveal relative md:grid md:grid-cols-2 md:gap-8">
-              <div class="md:order-2 md:pl-10">
-                <p class="text-sm text-slate-300">22:00</p>
-                <h3 class="text-lg font-semibold">Night out</h3>
-                <p class="text-slate-200">Bar hop / club / karaoke.</p>
-              </div>
-
-              <div class="mt-3 md:mt-0 md:order-1 md:pr-10 md:text-right">
-                <div class="glass rounded-3xl p-5">
-                  <p class="text-sm text-slate-200">
-                    Optional: head home whenever you need — no pressure.
-                  </p>
-                </div>
-              </div>
-
-              <div class="absolute left-4 top-2 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2"></div>
-            </div>
-          </div>
+        <div class="glass reveal rounded-3xl p-6">
+          <p class="text-xs uppercase tracking-wide text-slate-300">Theme</p>
+          <p class="mt-2 text-lg font-semibold">Disco / Sparkly</p>
+          <p class="mt-1 text-sm text-slate-200">Comfortable shoes advised.</p>
         </div>
-      </section>
 
-      <!-- Accommodation -->
-      <section id="stay" class="py-10">
-        <h2 class="reveal text-2xl font-bold">Accommodation</h2>
-
-        <div class="mt-5 grid gap-4 md:grid-cols-2">
-          <div class="glass reveal rounded-3xl p-6">
-            <h3 class="font-semibold">Address</h3>
-            <p class="mt-3 text-slate-200">
-              <span id="stayAddress">Accommodation Address, City</span><br/>
-              Check-in: <span class="font-medium text-white">16:00</span><br/>
-              Check-out: <span class="font-medium text-white">11:00</span>
-            </p>
-
-            <div class="mt-4 flex gap-2">
-              <button class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                onclick="copyText(document.getElementById('stayAddress').textContent)">Copy address</button>
-
-              <a class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                href="https://www.google.com/maps" target="_blank" rel="noreferrer">Open in Maps</a>
-            </div>
-          </div>
-
-          <div class="glass reveal overflow-hidden rounded-3xl">
-            <!-- Google Maps embed: replace the src with your embed link -->
-            <iframe
-              title="Map"
-              class="h-72 w-full"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2436.5!2d4.3517!3d50.8467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1"
-            ></iframe>
-          </div>
-        </div>
-      </section>
-
-      <!-- FAQ -->
-      <section id="faq" class="py-10">
-        <h2 class="reveal text-2xl font-bold">FAQ</h2>
-        <div class="mt-5 space-y-3">
-          <details class="glass reveal rounded-2xl p-5">
-            <summary class="cursor-pointer font-semibold">What if I’m late?</summary>
-            <p class="mt-2 text-slate-200">Message the group chat — we’ll tell you where we are.</p>
-          </details>
-          <details class="glass reveal rounded-2xl p-5">
-            <summary class="cursor-pointer font-semibold">Do I need cash?</summary>
-            <p class="mt-2 text-slate-200">Not usually, but it’s handy for small things.</p>
-          </details>
-          <details class="glass reveal rounded-2xl p-5">
-            <summary class="cursor-pointer font-semibold">What’s the vibe?</summary>
-            <p class="mt-2 text-slate-200">Fun, classy-chaotic, and very supportive.</p>
-          </details>
+        <div class="glass reveal rounded-3xl p-6">
+          <p class="text-xs uppercase tracking-wide text-slate-300">Group chat</p>
+          <p class="mt-2 text-sm text-slate-200 break-all" id="whatsappLink">
+            https://chat.whatsapp.com/your-invite-link
+          </p>
+          <button
+            class="mt-3 rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+            onclick="copyText(document.getElementById('whatsappLink').textContent)"
+          >
+            Copy link
+          </button>
         </div>
       </section>
 
@@ -288,9 +146,10 @@
     </main>
 
     <script>
-      // Smooth scroll helper
-      function scrollToSection(id) {
-        document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+      // Mobile menu
+      function toggleMenu() {
+        const el = document.getElementById("mobileMenu");
+        el.classList.toggle("hidden");
       }
 
       // Copy helper
@@ -320,18 +179,12 @@
         toastTimer = setTimeout(() => (el.style.opacity = "0"), 1400);
       }
 
-      // Reveal-on-scroll animation (IntersectionObserver)
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) e.target.classList.add("show");
-          }
-        },
-        { threshold: 0.12 }
-      );
+      // Reveal on scroll
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) e.target.classList.add("show");
+      }, { threshold: 0.12 });
 
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
     </script>
   </body>
 </html>
-
