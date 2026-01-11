@@ -14,6 +14,7 @@
         backdrop-filter: blur(12px);
         background: rgba(2, 6, 23, 0.35);
         border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
       }
 
       /* Scroll reveal animation */
@@ -55,14 +56,14 @@
 
   <body class="min-h-screen bg-slate-950 text-slate-100">
     <!-- Hero background image -->
-    <div class="fixed inset-0 -z-10">
-      <!-- Put your image at: ./assets/hero.jpg -->
+    <div class="fixed inset-0 -z-10 md:static md:h-[85vh]">
+      <!-- Put your image at: ./assets/lucy-vertical.jpeg -->
       <img
         src="./assets/lucy-vertical.jpeg"
         alt=""
-        class="h-full w-full object-cover object-[50%_20%] sm:object-[50%_25%] md:object-center opacity-70"
+        class="h-full w-full object-cover object-[50%_18%] sm:object-[50%_22%] md:object-[50%_30%] opacity-70"
       />
-      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/70 to-slate-950"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/75 to-slate-950"></div>
       <div class="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,.16)_1px,transparent_0)] [background-size:26px_26px]"></div>
     </div>
 
