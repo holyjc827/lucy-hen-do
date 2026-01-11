@@ -2,17 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="view-transition" content="same-origin" />
     <title>Hen Do Hub</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+      /* Visual style */
       .glass {
         backdrop-filter: blur(12px);
         background: rgba(2, 6, 23, 0.35);
         border: 1px solid rgba(255, 255, 255, 0.12);
       }
+
+      /* Scroll reveal animation */
       .reveal {
         opacity: 0;
         transform: translateY(10px);
@@ -23,9 +27,25 @@
         transform: translateY(0);
       }
 
-      /* Make anchor jumps not hide under sticky header (mobile-safe) */
       :root { --nav-h: 76px; }
+
+      html, body { overflow-x: hidden; }
+
+      /* Make anchor jumps not hide under sticky header */
       section { scroll-margin-top: calc(var(--nav-h) + 16px); }
+
+      /* iOS safe-area support (notch + home bar) */
+      .safe-x {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+      }
+      .safe-top { padding-top: env(safe-area-inset-top); }
+      .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+      /* Fixed elements respecting iOS home indicator */
+      .safe-bottom-fixed {
+        bottom: max(16px, env(safe-area-inset-bottom));
+      }
 
       @media (prefers-reduced-motion: reduce) {
         .reveal { transition: none; transform: none; opacity: 1; }
@@ -36,19 +56,19 @@
   <body class="min-h-screen bg-slate-950 text-slate-100">
     <!-- Hero background image -->
     <div class="fixed inset-0 -z-10">
-      <!-- Replace with your own hero image -->
+      <!-- Put your image at: ./assets/hero.jpg -->
       <img
         src="./assets/hero.jpg"
         alt=""
-        class="h-full w-full object-cover opacity-70"
+        class="h-full w-full object-cover object-center opacity-70"
       />
       <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/70 to-slate-950"></div>
       <div class="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,.16)_1px,transparent_0)] [background-size:26px_26px]"></div>
     </div>
 
     <!-- Nav -->
-    <header class="sticky top-0 z-50">
-      <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <header class="sticky top-0 z-50 bg-slate-950/60 backdrop-blur safe-top">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between safe-x py-4">
         <a href="./" class="flex items-center gap-2">
           <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10">✨</span>
           <span class="text-lg font-semibold tracking-tight">Hen Do Hub</span>
@@ -71,6 +91,8 @@
             class="md:hidden rounded-2xl bg-white/10 px-3 py-2 text-sm hover:bg-white/15"
             onclick="toggleMenu()"
             aria-label="Menu"
+            aria-expanded="false"
+            id="menuBtn"
           >
             ☰
           </button>
@@ -78,25 +100,27 @@
       </nav>
 
       <!-- Mobile dropdown -->
-      <div id="mobileMenu" class="mx-auto hidden max-w-6xl px-4 pb-4 md:hidden">
-        <div class="glass rounded-3xl p-3">
-          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./timeline.html">Timeline</a>
-          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./stay.html">Stay</a>
-          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./info.html">Info</a>
-          <a class="block rounded-2xl px-4 py-3 hover:bg-white/10" href="./faq.html">FAQ</a>
+      <div id="mobileMenu" class="mx-auto hidden max-w-6xl safe-x pb-4 md:hidden">
+        <div class="glass rounded-3xl p-2">
+          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="./timeline.html">Timeline</a>
+          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="./stay.html">Stay</a>
+          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="./info.html">Info</a>
+          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="./faq.html">FAQ</a>
         </div>
       </div>
     </header>
 
     <!-- Hero content -->
-    <main class="mx-auto max-w-6xl px-4 pt-10 md:pt-16">
+    <main class="mx-auto max-w-6xl safe-x pt-24 md:pt-16">
       <section class="reveal">
-        <div class="glass rounded-[2rem] p-8 md:p-12 shadow-xl shadow-black/30">
+        <div class="glass rounded-[2rem] p-6 md:p-12 shadow-xl shadow-black/30">
           <p class="text-sm text-slate-300">📍 City • 🗓️ Saturday, 00 Month 2026</p>
-          <h1 class="mt-3 text-4xl font-bold tracking-tight md:text-6xl">
-            A minimal plan.<br class="hidden md:block" />
+
+          <h1 class="mt-3 text-3xl font-bold tracking-tight leading-tight sm:text-4xl md:text-6xl">
+            A minimal plan.<br class="hidden sm:block" />
             Maximum chaos ✨
           </h1>
+
           <p class="mt-4 max-w-2xl text-slate-200">
             Everything you need for the day — timeline, accommodation, key info, and links — in one clean hub.
           </p>
@@ -148,8 +172,11 @@
     <script>
       // Mobile menu
       function toggleMenu() {
-        const el = document.getElementById("mobileMenu");
-        el.classList.toggle("hidden");
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("menuBtn");
+        const isHidden = menu.classList.contains("hidden");
+        menu.classList.toggle("hidden");
+        btn.setAttribute("aria-expanded", String(isHidden));
       }
 
       // Copy helper
@@ -162,7 +189,7 @@
         }
       }
 
-      // Tiny toast
+      // Tiny toast (safe for iPhone bottom bar)
       let toastTimer;
       function toast(msg) {
         clearTimeout(toastTimer);
@@ -171,7 +198,7 @@
           el = document.createElement("div");
           el.id = "toast";
           el.className =
-            "fixed bottom-4 left-1/2 -translate-x-1/2 rounded-2xl bg-black/70 px-4 py-2 text-sm text-white shadow-lg shadow-black/30";
+            "fixed safe-bottom-fixed left-1/2 -translate-x-1/2 rounded-2xl bg-black/70 px-4 py-2 text-sm text-white shadow-lg shadow-black/30";
           document.body.appendChild(el);
         }
         el.textContent = msg;
@@ -180,11 +207,23 @@
       }
 
       // Reveal on scroll
-      const io = new IntersectionObserver((entries) => {
-        for (const e of entries) if (e.isIntersecting) e.target.classList.add("show");
-      }, { threshold: 0.12 });
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) if (e.isIntersecting) e.target.classList.add("show");
+        },
+        { threshold: 0.12 }
+      );
 
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      // Optional: close mobile menu when clicking outside
+      document.addEventListener("click", (e) => {
+        const menu = document.getElementById("mobileMenu");
+        const btn = document.getElementById("menuBtn");
+        if (menu.classList.contains("hidden")) return;
+        const clickedInside = menu.contains(e.target) || btn.contains(e.target);
+        if (!clickedInside) toggleMenu();
+      });
     </script>
   </body>
 </html>
