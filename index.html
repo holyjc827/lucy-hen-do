@@ -58,7 +58,7 @@
 
   <body class="min-h-screen bg-slate-950 text-slate-100">
     <!-- Hero background image -->
-    <div class="fixed left-0 right-0 top-0 -z-10 h-[100svh] md:h-[85vh]">
+    <div class="pointer-events-none fixed left-0 right-0 top-0 -z-10 h-[100svh] md:h-[85vh]">
       <!-- Put your image at: ./assets/lucy-vertical.jpeg -->
       <img
         src="./assets/lucy-vertical.jpeg"
@@ -79,8 +79,6 @@
 
         <div class="hidden items-center gap-7 text-sm text-slate-200 md:flex">
           <a class="hover:text-white/95" href="#timeline">Timeline</a>
-          <a class="hover:text-white/95" href="#stay">Stay</a>
-          <a class="hover:text-white/95" href="#info">Info</a>
         </div>
 
         <div class="flex items-center gap-2">
@@ -105,8 +103,6 @@
       <div id="mobileMenu" class="mx-auto hidden max-w-6xl safe-x pb-4 md:hidden">
         <div class="glass rounded-3xl p-2">
           <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="#timeline" onclick="closeMenu()">Timeline</a>
-          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="#stay" onclick="closeMenu()">Stay</a>
-          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="#info" onclick="closeMenu()">Info</a>
         </div>
       </div>
     </header>
@@ -134,15 +130,12 @@
           </h1>
 
           <p class="mt-4 max-w-2xl text-slate-200">
-            Everything you need for the weekend — timeline, accommodation, key info, and links — in one clean hub.
+            Everything you need for the weekend — timeline, accommodation, and links — in one clean hub.
           </p>
 
           <div class="mt-7 flex flex-col gap-3 sm:flex-row">
             <a href="#timeline" class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 hover:opacity-95">
               Open timeline
-            </a>
-            <a href="#stay" class="rounded-2xl bg-white/10 px-5 py-3 text-sm font-semibold hover:bg-white/15">
-              View accommodation
             </a>
           </div>
         </div>
@@ -224,81 +217,6 @@
         </div>
       </section>
 
-      <!-- Stay section -->
-      <section id="stay" class="mt-6 reveal">
-        <div class="glass rounded-3xl p-6 md:p-10">
-          <h2 class="text-xl font-bold md:text-2xl">Stay</h2>
-
-          <div class="mt-4 grid gap-4 md:grid-cols-2">
-            <div class="rounded-2xl bg-white/5 p-5">
-              <p class="text-sm text-slate-300">Accommodation</p>
-              <p class="mt-1 text-lg font-semibold text-white">Monksholm House (Farm)</p>
-
-              <a
-                href="https://www.google.com/maps?q=Monksholm+House"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="mt-4 flex w-full items-center justify-center rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-              >
-                📍 Open in Google Maps
-              </a>
-            </div>
-
-            <div class="rounded-2xl bg-white/5 p-5">
-              <p class="text-sm text-slate-300">What to bring</p>
-              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-200">
-                <li>Comfy shoes</li>
-                <li>Something warm for evenings</li>
-                <li>Toiletries + chargers</li>
-                <li>Any theme bits ✨</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Info section -->
-      <section id="info" class="mt-6 reveal">
-        <div class="glass rounded-3xl p-6 md:p-10">
-          <h2 class="text-xl font-bold md:text-2xl">Info</h2>
-
-          <div class="mt-4 grid gap-4 md:grid-cols-2">
-            <div class="rounded-2xl bg-white/5 p-5">
-              <p class="text-sm text-slate-300">Theme</p>
-              <p class="mt-1 text-lg font-semibold text-white">Disco / Sparkly</p>
-              <p class="mt-2 text-sm text-slate-200">Comfortable shoes advised.</p>
-            </div>
-
-            <div class="rounded-2xl bg-white/5 p-5">
-              <p class="text-sm text-slate-300">Organiser</p>
-              <p class="mt-2 text-sm text-slate-200">
-                Add your contact info here (phone / WhatsApp / emergency details).
-              </p>
-            </div>
-          </div>
-
-          <div class="mt-4 rounded-2xl bg-white/5 p-5">
-            <p class="text-sm text-slate-300">Group chat</p>
-            <div class="mt-3 flex flex-col gap-2 sm:flex-row">
-              <a
-                href="https://chat.whatsapp.com/GlkL4GUrRPDFfYRXXgr3iG"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex w-full items-center justify-center rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-95"
-              >
-                Join WhatsApp group
-              </a>
-              <button
-                class="w-full rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                onclick="copyText('https://chat.whatsapp.com/GlkL4GUrRPDFfYRXXgr3iG')"
-              >
-                Copy invite link
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <footer class="py-12 text-center text-sm text-slate-400">
         Made with Love for Lucy by JC 💫
       </footer>
@@ -365,7 +283,7 @@
         const btn = document.getElementById("menuBtn");
         if (menu.classList.contains("hidden")) return;
         const clickedInside = menu.contains(e.target) || btn.contains(e.target);
-        if (!clickedInside) toggleMenu();
+        if (!clickedInside) closeMenu();
       });
     </script>
   </body>
