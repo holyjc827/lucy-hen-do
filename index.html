@@ -12,7 +12,7 @@
       /* Visual style */
       .glass {
         backdrop-filter: blur(12px);
-        background: rgba(2, 6, 23, 0.35);
+        background: rgba(2, 6, 23, 0.48);
         border: 1px solid rgba(255, 255, 255, 0.12);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
       }
@@ -52,6 +52,63 @@
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         .reveal { transition: none; transform: none; opacity: 1; }
+      }
+
+      .timeline {
+        position: relative;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 20px;
+        width: 1px;
+        background: rgba(255,255,255,.14);
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 52px;
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: 20px;
+        top: 24px;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.95);
+        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
+      }
+
+      .timeline-connector {
+        position: absolute;
+        left: 20px;
+        top: 30px;
+        width: 22px;
+        height: 1px;
+        background: rgba(255,255,255,.14);
+      }
+
+      @media (min-width: 768px) {
+        .timeline::before {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+        .timeline-item {
+          padding-left: 0;
+        }
+        .timeline-dot {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+        .timeline-connector {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -98,13 +155,6 @@
           </button>
         </div>
       </nav>
-
-      <!-- Mobile dropdown -->
-      <div id="mobileMenu" class="mx-auto hidden max-w-6xl safe-x pb-4 md:hidden">
-        <div class="glass rounded-3xl p-2">
-          <a class="block rounded-2xl px-4 py-3 text-base hover:bg-white/10" href="#timeline" onclick="closeMenu()">Timeline</a>
-        </div>
-      </div>
     </header>
 
     <!-- Page content -->
@@ -135,7 +185,7 @@
 
           <div class="mt-7 flex flex-col gap-3 sm:flex-row">
             <a href="#timeline" class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 hover:opacity-95">
-              Open timeline
+              Go to timeline
             </a>
           </div>
         </div>
@@ -212,13 +262,13 @@
             <!-- Center line (desktop) -->
             <div class="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-white/15 md:block"></div>
             <!-- Left line (mobile) -->
-            <div class="absolute left-5 top-0 h-full w-px bg-white/15 md:hidden"></div>
+            <div class="absolute left-6 top-0 h-full w-px bg-white/15 md:hidden"></div>
 
-            <div class="space-y-6">
+            <div class="space-y-6 md:space-y-6 pl-12 md:pl-0">
               <!-- ITEM 1 (left on desktop) -->
               <div class="relative md:grid md:grid-cols-2 md:gap-10">
                 <!-- Dot -->
-                <div class="absolute left-5 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
 
                 <!-- Left card -->
                 <div class="md:pr-8">
@@ -248,7 +298,7 @@
               <!-- ITEM 2 (right on desktop) -->
               <div class="relative md:grid md:grid-cols-2 md:gap-10">
                 <!-- Dot -->
-                <div class="absolute left-5 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
 
                 <!-- Left spacer -->
                 <div class="hidden md:block"></div>
@@ -276,7 +326,7 @@
 
               <!-- ITEM 3 (left on desktop) -->
               <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-5 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white shadow-[0_0_0_6px_rgba(255,255,255,0.08)] md:left-1/2 md:-translate-x-1/2"></div>
 
                 <div class="md:pr-8">
                   <div class="glass rounded-3xl p-5">
@@ -310,7 +360,7 @@
 
               <!-- ITEM 4 (right on desktop) -->
               <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-5 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
 
                 <div class="hidden md:block"></div>
 
@@ -332,7 +382,7 @@
 
               <!-- ITEM 5 (left on desktop) -->
               <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-5 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
 
                 <div class="md:pr-8">
                   <div class="glass rounded-3xl p-5">
@@ -366,7 +416,7 @@
 
               <!-- ITEM 6 (right on desktop) -->
               <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-5 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
 
                 <div class="hidden md:block"></div>
 
