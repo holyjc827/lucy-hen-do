@@ -768,15 +768,6 @@
               📍 Open map
             </a>
 
-            <button
-              type="button"
-              class="mag lift press inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-sm hover:bg-white/15"
-              data-mag
-              onclick="copySheetDetails()"
-            >
-              📋 Copy details
-            </button>
-
             <a
               id="sheetExtra"
               href="#"
@@ -941,18 +932,6 @@
         if (sheet.open) sheet.close();
       }
 
-      function copySheetDetails() {
-        if (!currentSheetData) return;
-        const lines = [
-          `${currentSheetData.day} • ${currentSheetData.time}`,
-          currentSheetData.title,
-          currentSheetData.desc,
-          `Location: ${currentSheetData.location}`,
-          currentSheetData.map ? `Map: ${currentSheetData.map}` : ""
-        ].filter(Boolean);
-        copyText(lines.join("\n"));
-      }
-
       // click outside to close (on the backdrop area)
       sheet.addEventListener("click", (e) => {
         const card = sheet.querySelector(".sheet-card");
@@ -1024,7 +1003,6 @@
       }
       window.scrollToNextTimelineItem = scrollToNextTimelineItem;
       window.closeSheet = closeSheet;
-      window.copySheetDetails = copySheetDetails;
     </script>
   </body>
 </html>
