@@ -33,12 +33,10 @@
       html { scroll-behavior: smooth; }
       html, body {
         min-height: 100%;
-        background: #050612; /* matches your darkest theme color */
+        background: var(--bg0);
+        overflow-x: clip; /* prevents weird horizontal bounce gaps */
       }
-
-      body {
-        background-attachment: fixed; /* helps some mobile browsers */
-      }      
+      body { background-attachment: fixed; }
       section { scroll-margin-top: calc(var(--nav-h) + 16px); }
 
       /* iOS safe-area support */
@@ -192,7 +190,6 @@
         border-radius: 999px;
       }
 
-      /* Progress fill on the rail */
       .timeline-progress{
         position:absolute;
         left: 24px;
@@ -205,7 +202,6 @@
           hsla(var(--a1), .85),
           hsla(var(--a3), .75));
         box-shadow: 0 0 18px hsla(var(--a2), .28);
-        transform: translateX(-0px);
         will-change: height;
       }
 
@@ -239,18 +235,7 @@
         z-index: 20;
       }
 
-      /* Active state */
-      @keyframes pulse-dot {
-        0% { box-shadow: 0 0 0 7px rgba(255,255,255,.08), 0 0 0 0 hsla(var(--a2), .0); }
-        50% { box-shadow: 0 0 0 12px hsla(var(--a2), .18), 0 0 22px hsla(var(--a1), .18); }
-        100% { box-shadow: 0 0 0 7px rgba(255,255,255,.08), 0 0 0 0 hsla(var(--a2), .0); }
-      }
-      .timeline-item.is-active .timeline-dot{
-        opacity: 1;
-        background: white;
-        animation: pulse-dot 2.0s ease-in-out infinite;
-      }
-
+      /* Active item highlight */
       .timeline-item.is-active .event-card{
         border-color: rgba(255,255,255,.16);
         box-shadow: 0 18px 70px rgba(0,0,0,.55);
@@ -265,39 +250,24 @@
         .timeline-connector{ display:none; }
       }
 
+      /* Blink / pulse (rail + dots) */
       @keyframes glow-blink {
         0%, 100% { filter: brightness(1); opacity: .85; }
         50% { filter: brightness(1.25); opacity: 1; }
       }
-
       @keyframes dot-blink {
-        0%, 100% { transform: translateX(-50%) scale(1); opacity: .75; }
+        0%, 100% { transform: translateX(-50%) scale(1); opacity: .65; }
         50% { transform: translateX(-50%) scale(1.12); opacity: 1; }
       }
-
-      /* Rail progress blinking */
-      .timeline-progress {
-        animation: glow-blink 1.8s ease-in-out infinite;
-      }
-
-      /* Dots blinking (all dots, subtle) */
-      .timeline-dot {
-        animation: dot-blink 1.6s ease-in-out infinite;
-      }
-
-      /* Active dot = slightly stronger */
-      .timeline-item.is-active .timeline-dot {
-        animation-duration: 1.2s;
-        opacity: 1;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .timeline-progress, .timeline-dot { animation: none !important; }
-      }
+      .timeline-progress { animation: glow-blink 1.8s ease-in-out infinite; }
+      .timeline-dot { animation: dot-blink 1.6s ease-in-out infinite; }
+      .timeline-item.is-active .timeline-dot { animation-duration: 1.15s; opacity: 1; background: #fff; }
 
       /* =========================
          Bottom sheet modal
       ========================== */
+      dialog { background: transparent; } /* iOS/Safari hardening */
+
       dialog.sheet{
         width: min(560px, calc(100% - 24px));
         border: 0;
@@ -318,27 +288,19 @@
         transform: translateY(18px);
         opacity: 0;
         transition: transform 260ms ease, opacity 260ms ease;
+        color: rgba(255,255,255,.92); /* force consistent text */
       }
       dialog[open] .sheet-card{
         transform: translateY(0);
         opacity: 1;
       }
 
-      /* ===== Bottom sheet: force consistent text + links ===== */
-      .sheet-card{
-        color: rgba(255,255,255,.92);            /* <-- fixes black title */
-      }
-
-      .sheet-card a,
-      .sheet-card button{
-        color: inherit;                          /* <-- prevents UA link colors */
-      }
-
+      .sheet-card a, .sheet-card button { color: inherit; }
       #sheetMeta{ color: rgba(255,255,255,.72); }
       #sheetDesc, #sheetLoc{ color: rgba(255,255,255,.82); }
       #sheetTitle{ color: rgba(255,255,255,.96); }
 
-      /* Unified button system for the sheet */
+      /* Unified button system for the sheet (2 buttons) */
       .sheet-btn{
         display: inline-flex;
         align-items: center;
@@ -352,25 +314,22 @@
         transition: transform 160ms ease, filter 160ms ease, background 160ms ease, border-color 160ms ease;
         will-change: transform;
       }
-
       .sheet-btn:active{ transform: translateY(1px) scale(.99); }
 
       .sheet-btn-primary{
         background: linear-gradient(135deg,
           hsla(var(--a2), .95),
           hsla(var(--a1), .85));
-        color: #050612; /* dark text on bright button */
+        color: #050612;
         box-shadow: 0 16px 50px rgba(0,0,0,.45);
       }
-
       .sheet-btn-primary:hover{ filter: brightness(1.05); }
 
       .sheet-btn-secondary{
         background: rgba(255,255,255,.10);
         border: 1px solid rgba(255,255,255,.14);
-        color: rgba(255,255,255,.90);           /* <-- fixes black “Menu” */
+        color: rgba(255,255,255,.92);
       }
-
       .sheet-btn-secondary:hover{
         background: rgba(255,255,255,.13);
         border-color: rgba(255,255,255,.20);
@@ -385,7 +344,7 @@
         .aurora { animation: none; }
         .shine::after { display:none; }
         .lift, .mag { transition:none; }
-        .timeline-item.is-active .timeline-dot { animation:none; }
+        .timeline-progress, .timeline-dot { animation:none !important; }
         dialog[open] .sheet-card { transition:none; }
         .spotlight { display:none; }
       }
@@ -393,16 +352,14 @@
   </head>
 
   <body class="min-h-screen bg-base text-white/90">
-    <!-- Cursor spotlight -->
     <div class="spotlight"></div>
 
-    <!-- Aurora blob -->
     <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div class="aurora absolute -top-24 left-1/2 h-[540px] w-[540px] -translate-x-1/2 rounded-full"></div>
     </div>
 
     <!-- Hero background image -->
-    <div class="pointer-events-none fixed left-0 right-0 top-0 -z-20 h-[100svh] md:h-[85vh]">
+    <div class="pointer-events-none fixed inset-0 -z-20">
       <img
         src="./assets/lucy-vertical.jpeg"
         alt=""
@@ -421,20 +378,14 @@
         </a>
 
         <div class="flex items-center gap-2">
-          <a
-            href="#timeline"
-            class="mag lift press rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-            data-mag
-          >
+          <a href="#timeline" class="mag lift press rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15" data-mag>
             See plan
           </a>
         </div>
       </nav>
     </header>
 
-    <!-- Page content -->
     <main id="top" class="mx-auto max-w-6xl safe-x pt-24 md:pt-16">
-      <!-- Hero card -->
       <section class="reveal" style="--d:0ms">
         <div class="grad-border glass shine lift rounded-[2rem] p-6 md:p-12">
           <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/75">
@@ -457,8 +408,7 @@
               class="mag lift press inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-[#050612] hover:opacity-95"
               data-mag
             >
-              Go to plan
-              <span class="text-base">→</span>
+              Go to plan <span class="text-base">→</span>
             </a>
           </div>
         </div>
@@ -546,9 +496,7 @@
           <div class="flex items-end justify-between gap-4">
             <div>
               <h2 class="text-xl font-bold md:text-2xl">Timeline</h2>
-              <p class="mt-2 text-white/80">
-                Scroll to fill the rail. Tap a card for the details sheet.
-              </p>
+              <p class="mt-2 text-white/80">Scroll to fill the rail. Tap a card for the details sheet.</p>
             </div>
 
             <div class="flex items-center gap-3">
@@ -558,7 +506,6 @@
             </div>
           </div>
 
-          <!-- Timeline -->
           <div id="timelineList" class="timeline mt-8 space-y-6">
             <div id="timelineProgress" class="timeline-progress" aria-hidden="true"></div>
 
@@ -570,7 +517,7 @@
               <div class="md:pr-8">
                 <button
                   type="button"
-                  class="event-card grad-border glass shine lift press w-full rounded-3xl p-5 text-left"
+                  class="event-card grad-border glass lift press w-full rounded-3xl p-5 text-left"
                   data-sheet
                   data-day="Friday"
                   data-time="Anytime"
@@ -585,9 +532,7 @@
                     <p class="text-xs text-white/60">Anytime</p>
                   </div>
                   <h3 class="mt-2 text-lg font-semibold">Arrivals</h3>
-                  <p class="mt-2 text-sm text-white/80">
-                    Get settled and dinner at the accommodation!
-                  </p>
+                  <p class="mt-2 text-sm text-white/80">Get settled and dinner at the accommodation!</p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">Location: Monksholm House</span>
@@ -609,7 +554,7 @@
               <div class="md:pl-8">
                 <button
                   type="button"
-                  class="event-card grad-border glass shine lift press w-full rounded-3xl p-5 text-left"
+                  class="event-card grad-border glass lift press w-full rounded-3xl p-5 text-left"
                   data-sheet
                   data-day="Saturday"
                   data-time="~10:00"
@@ -625,10 +570,7 @@
                   </div>
 
                   <h3 class="mt-2 text-lg font-semibold">Breakfast (or Brunch)</h3>
-
-                  <p class="mt-2 text-sm text-white/80">
-                    Slow start, coffee, and fuel up.
-                  </p>
+                  <p class="mt-2 text-sm text-white/80">Slow start, coffee, and fuel up.</p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">Location: Monksholm House</span>
@@ -645,7 +587,7 @@
               <div class="md:pr-8">
                 <button
                   type="button"
-                  class="event-card grad-border glass shine lift press w-full rounded-3xl p-5 text-left"
+                  class="event-card grad-border glass lift press w-full rounded-3xl p-5 text-left"
                   data-sheet
                   data-day="Saturday"
                   data-time="11:30"
@@ -661,7 +603,6 @@
                   </div>
 
                   <h3 class="mt-2 text-lg font-semibold">Eden Mill Distillery</h3>
-
                   <p class="mt-2 text-sm text-white/80">Gin Experience</p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
@@ -684,7 +625,7 @@
               <div class="md:pl-8">
                 <button
                   type="button"
-                  class="event-card grad-border glass shine lift press w-full rounded-3xl p-5 text-left"
+                  class="event-card grad-border glass lift press w-full rounded-3xl p-5 text-left"
                   data-sheet
                   data-day="Saturday"
                   data-time="13:00"
@@ -700,10 +641,7 @@
                   </div>
 
                   <h3 class="mt-2 text-lg font-semibold">Lunch / Chill</h3>
-
-                  <p class="mt-2 text-sm text-white/80">
-                    Light lunch and chill at the accommodation.
-                  </p>
+                  <p class="mt-2 text-sm text-white/80">Light lunch and chill at the accommodation.</p>
                 </button>
               </div>
             </div>
@@ -716,7 +654,7 @@
               <div class="md:pr-8">
                 <button
                   type="button"
-                  class="event-card grad-border glass shine lift press w-full rounded-3xl p-5 text-left"
+                  class="event-card grad-border glass lift press w-full rounded-3xl p-5 text-left"
                   data-sheet
                   data-day="Saturday"
                   data-time="19:00"
@@ -733,7 +671,6 @@
                   </div>
 
                   <h3 class="mt-2 text-lg font-semibold">Dinner</h3>
-
                   <p class="mt-2 text-sm text-white/80">Forgan's</p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
@@ -755,7 +692,7 @@
               <div class="md:pl-8">
                 <button
                   type="button"
-                  class="event-card grad-border glass shine lift press w-full rounded-3xl p-5 text-left"
+                  class="event-card grad-border glass lift press w-full rounded-3xl p-5 text-left"
                   data-sheet
                   data-day="Sunday"
                   data-time="10:00"
@@ -771,10 +708,7 @@
                   </div>
 
                   <h3 class="mt-2 text-lg font-semibold">Departure</h3>
-
-                  <p class="mt-2 text-sm text-white/80">
-                    Car pool can be arranged!
-                  </p>
+                  <p class="mt-2 text-sm text-white/80">Car pool can be arranged!</p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">Checkout: 10:00</span>
@@ -798,9 +732,9 @@
         <div class="p-5 sm:p-6">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <p id="sheetMeta" class="text-xs uppercase tracking-wide text-white/70"></p>
+              <p id="sheetMeta" class="text-xs uppercase tracking-wide"></p>
               <h3 id="sheetTitle" class="mt-2 text-xl font-semibold"></h3>
-              <p id="sheetDesc" class="mt-2 text-sm text-white/80"></p>
+              <p id="sheetDesc" class="mt-2 text-sm"></p>
             </div>
             <button
               type="button"
@@ -815,32 +749,19 @@
 
           <div class="mt-4">
             <p class="text-xs uppercase tracking-wide text-white/60">Location</p>
-            <p id="sheetLoc" class="mt-1 text-sm text-white/85"></p>
+            <p id="sheetLoc" class="mt-1 text-sm"></p>
           </div>
 
           <div id="sheetTags" class="mt-4 flex flex-wrap gap-2"></div>
 
-          <div class="mt-5 grid gap-2 sm:grid-cols-2">
-            <a
-              id="sheetMap"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="mag lift press inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-[#050612]"
-              data-mag
-            >
+          <!-- TWO BUTTONS ONLY -->
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            <a id="sheetMap" href="#" target="_blank" rel="noopener noreferrer" class="sheet-btn sheet-btn-primary">
               📍 Open map
             </a>
 
-            <a
-              id="sheetExtra"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="mag lift press hidden inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-sm hover:bg-white/15 sm:col-span-2"
-              data-mag
-            >
-              Open extra link
+            <a id="sheetExtra" href="#" target="_blank" rel="noopener noreferrer" class="sheet-btn sheet-btn-secondary hidden">
+              ↗ Menu
             </a>
           </div>
         </div>
@@ -848,9 +769,7 @@
     </dialog>
 
     <script>
-      /* =========================
-         Toast + Copy helper
-      ========================== */
+      /* Toast + Copy helper */
       async function copyText(text) {
         try {
           await navigator.clipboard.writeText(text.trim());
@@ -876,9 +795,7 @@
         toastTimer = setTimeout(() => (el.style.opacity = "0"), 1400);
       }
 
-      /* =========================
-         Scroll reveal
-      ========================== */
+      /* Scroll reveal */
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) if (e.isIntersecting) e.target.classList.add("show");
@@ -887,10 +804,7 @@
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-      /* =========================
-         Cursor spotlight (desktop)
-      ========================== */
-      const spotlight = document.querySelector(".spotlight");
+      /* Cursor spotlight (desktop) */
       window.addEventListener("mousemove", (e) => {
         const x = (e.clientX / window.innerWidth) * 100;
         const y = (e.clientY / window.innerHeight) * 100;
@@ -898,14 +812,11 @@
         document.documentElement.style.setProperty("--my", y + "%");
       }, { passive: true });
 
-      /* =========================
-         Timeline: active item + rail progress fill
-      ========================== */
+      /* Timeline: active item + rail progress fill */
       const items = [...document.querySelectorAll("[data-item]")];
       const progressEl = document.getElementById("timelineProgress");
       const timelineList = document.getElementById("timelineList");
 
-      // Active item highlighting
       const itemIO = new IntersectionObserver((entries) => {
         const visible = entries.filter((e) => e.isIntersecting);
         if (!visible.length) return;
@@ -917,7 +828,6 @@
 
       items.forEach(el => itemIO.observe(el));
 
-      // Rail fill (based on scroll position within the timeline list)
       function updateTimelineProgress() {
         const r = timelineList.getBoundingClientRect();
         const viewMid = window.innerHeight * 0.52;
@@ -929,9 +839,7 @@
       window.addEventListener("scroll", updateTimelineProgress, { passive: true });
       window.addEventListener("resize", updateTimelineProgress);
 
-      /* =========================
-         Bottom sheet (tap timeline card)
-      ========================== */
+      /* Bottom sheet (tap timeline card) */
       const sheet = document.getElementById("sheet");
       const sheetMeta = document.getElementById("sheetMeta");
       const sheetTitle = document.getElementById("sheetTitle");
@@ -941,11 +849,9 @@
       const sheetMap = document.getElementById("sheetMap");
       const sheetExtra = document.getElementById("sheetExtra");
 
-      let currentSheetData = null;
-
       function openSheetFrom(btn) {
         const d = btn.dataset;
-        currentSheetData = {
+        const data = {
           day: d.day || "",
           time: d.time || "",
           title: d.title || "",
@@ -956,15 +862,15 @@
           extra: d.extraLink || "" // "Label|url"
         };
 
-        sheetMeta.textContent = `${currentSheetData.day} • ${currentSheetData.time}`;
-        sheetTitle.textContent = currentSheetData.title;
-        sheetDesc.textContent = currentSheetData.desc;
-        sheetLoc.textContent = currentSheetData.location || "—";
-        sheetMap.href = currentSheetData.map || "#";
+        sheetMeta.textContent = `${data.day} • ${data.time}`;
+        sheetTitle.textContent = data.title;
+        sheetDesc.textContent = data.desc;
+        sheetLoc.textContent = data.location || "—";
+        sheetMap.href = data.map || "#";
 
         // tags
         sheetTags.innerHTML = "";
-        const tags = (currentSheetData.tags || "").split("|").map(s => s.trim()).filter(Boolean);
+        const tags = (data.tags || "").split("|").map(s => s.trim()).filter(Boolean);
         tags.forEach(t => {
           const span = document.createElement("span");
           span.className = "rounded-full bg-white/10 px-3 py-1 text-xs text-white/85";
@@ -972,9 +878,9 @@
           sheetTags.appendChild(span);
         });
 
-        // extra link
-        if (currentSheetData.extra && currentSheetData.extra.includes("|")) {
-          const [label, url] = currentSheetData.extra.split("|");
+        // extra link (2nd button)
+        if (data.extra && data.extra.includes("|")) {
+          const [label, url] = data.extra.split("|");
           sheetExtra.classList.remove("hidden");
           sheetExtra.textContent = `↗ ${label.trim()}`;
           sheetExtra.href = url.trim();
@@ -983,7 +889,6 @@
           sheetExtra.href = "#";
         }
 
-        // show modal
         if (typeof sheet.showModal === "function") sheet.showModal();
         else sheet.setAttribute("open", "open");
       }
@@ -992,7 +897,6 @@
         if (sheet.open) sheet.close();
       }
 
-      // click outside to close (on the backdrop area)
       sheet.addEventListener("click", (e) => {
         const card = sheet.querySelector(".sheet-card");
         const r = card.getBoundingClientRect();
@@ -1005,36 +909,7 @@
         btn.addEventListener("click", () => openSheetFrom(btn));
       });
 
-      /* =========================
-         Hover tilt (desktop, subtle)
-      ========================== */
-      tiltCards.forEach((card) => {
-        let raf = null;
-
-        card.addEventListener("mousemove", (e) => {
-          // avoid tilt on small screens/touch
-          if (window.matchMedia("(pointer: coarse)").matches) return;
-
-          const rect = card.getBoundingClientRect();
-          const px = (e.clientX - rect.left) / rect.width;
-          const py = (e.clientY - rect.top) / rect.height;
-          const rx = (py - 0.5) * -4; // rotation range
-          const ry = (px - 0.5) * 6;
-
-          if (raf) cancelAnimationFrame(raf);
-          raf = requestAnimationFrame(() => {
-            card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
-          });
-        });
-
-        card.addEventListener("mouseleave", () => {
-          card.style.transform = "";
-        });
-      });
-
-      /* =========================
-         Magnetic buttons (desktop)
-      ========================== */
+      /* Magnetic buttons (desktop) */
       document.querySelectorAll("[data-mag]").forEach((btn) => {
         const strength = 10;
         btn.classList.add("mag");
