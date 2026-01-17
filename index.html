@@ -54,46 +54,52 @@
         .reveal { transition: none; transform: none; opacity: 1; }
       }
 
+      /* ===== Timeline (fixed for mobile) ===== */
       .timeline {
         position: relative;
       }
 
+      /* Left rail (mobile) */
       .timeline::before {
         content: "";
         position: absolute;
         top: 0;
         bottom: 0;
-        left: 20px;
+        left: 24px; /* sits nicely in the mobile gutter */
         width: 1px;
         background: rgba(255,255,255,.14);
       }
 
+      /* Each item gets a left gutter so rail + dot never overlap cards */
       .timeline-item {
         position: relative;
-        padding-left: 52px;
+        padding-left: 56px;
       }
 
       .timeline-dot {
         position: absolute;
-        left: 20px;
-        top: 24px;
+        left: 24px;
+        top: 26px;
         transform: translateX(-50%);
         width: 12px;
         height: 12px;
         border-radius: 999px;
         background: rgba(255,255,255,.95);
         box-shadow: 0 0 0 6px rgba(255,255,255,.08);
+        z-index: 30; /* IMPORTANT: above cards */
       }
 
       .timeline-connector {
         position: absolute;
-        left: 20px;
-        top: 30px;
+        left: 24px;
+        top: 32px;
         width: 22px;
         height: 1px;
         background: rgba(255,255,255,.14);
+        z-index: 20;
       }
 
+      /* Desktop: center rail + alternating cards */
       @media (min-width: 768px) {
         .timeline::before {
           left: 50%;
@@ -116,7 +122,6 @@
   <body class="min-h-screen bg-slate-950 text-slate-100">
     <!-- Hero background image -->
     <div class="pointer-events-none fixed left-0 right-0 top-0 -z-10 h-[100svh] md:h-[85vh]">
-      <!-- Put your image at: ./assets/lucy-vertical.jpeg -->
       <img
         src="./assets/lucy-vertical.jpeg"
         alt=""
@@ -162,7 +167,6 @@
       <!-- Hero card -->
       <section class="reveal">
         <div class="glass rounded-[2rem] p-6 md:p-12 shadow-xl shadow-black/30">
-          <!-- Location + dates (mobile-friendly wrap) -->
           <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-300">
             <span class="inline-flex items-center gap-2">
               📍 <span>St Andrews, Scotland</span>
@@ -171,7 +175,7 @@
             <span class="hidden sm:inline text-slate-400">•</span>
 
             <span class="inline-flex items-center gap-2">
-              🗓️ <span>29-05-2026 – 31-05-2026</span>
+              🗓️ <span>29-05-2026 ~ 31-05-2026</span>
             </span>
           </div>
 
@@ -257,194 +261,189 @@
             </a>
           </div>
 
-          <!-- Timeline rail -->
-          <div class="relative mt-8">
-            <!-- Center line (desktop) -->
-            <div class="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-white/15 md:block"></div>
-            <!-- Left line (mobile) -->
-            <div class="absolute left-6 top-0 h-full w-px bg-white/15 md:hidden"></div>
+          <!-- Timeline -->
+          <div class="timeline mt-8 space-y-6">
+            <!-- ITEM 1 (left on desktop) -->
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
+              <span class="timeline-dot"></span>
+              <span class="timeline-connector md:hidden"></span>
 
-            <div class="space-y-6 md:space-y-6 pl-12 md:pl-0">
-              <!-- ITEM 1 (left on desktop) -->
-              <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <!-- Dot -->
-                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
-
-                <!-- Left card -->
-                <div class="md:pr-8">
-                  <div class="glass rounded-3xl p-5">
-                    <div class="flex items-center justify-between gap-4">
-                      <p class="text-xs uppercase tracking-wide text-slate-300">Friday</p>
-                      <p class="text-xs text-slate-300">Anytime</p>
-                    </div>
-
-                    <h3 class="mt-2 text-lg font-semibold">Arrivals</h3>
-
-                    <p class="mt-2 text-sm text-slate-200">
-                      Get settled and dinner at the accommodation!
-                    </p>
-
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Bring: comfy clothes</span>
-                      <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Parking: on-site</span>
-                    </div>
+              <div class="md:pr-8">
+                <div class="glass rounded-3xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="text-xs uppercase tracking-wide text-slate-300">Friday</p>
+                    <p class="text-xs text-slate-300">Anytime</p>
                   </div>
-                </div>
 
-                <!-- Right spacer (desktop) -->
-                <div class="hidden md:block"></div>
-              </div>
+                  <h3 class="mt-2 text-lg font-semibold">Arrivals</h3>
 
-              <!-- ITEM 2 (right on desktop) -->
-              <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <!-- Dot -->
-                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
+                  <p class="mt-2 text-sm text-slate-200">
+                    Get settled and dinner at the accommodation!
+                  </p>
 
-                <!-- Left spacer -->
-                <div class="hidden md:block"></div>
-
-                <!-- Right card -->
-                <div class="md:pl-8">
-                  <div class="glass rounded-3xl p-5">
-                    <div class="flex items-center justify-between gap-4">
-                      <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                      <p class="text-xs text-slate-300">~10:00</p>
-                    </div>
-
-                    <h3 class="mt-2 text-lg font-semibold"></h3>
-
-                    <p class="mt-2 text-sm text-slate-200">
-                      Breakfast (or Brunch)
-                    </p>
-
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Bring: comfy clothes</span>
-                    </div>
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Bring: comfy clothes</span>
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Parking: on-site</span>
                   </div>
                 </div>
               </div>
 
-              <!-- ITEM 3 (left on desktop) -->
-              <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white shadow-[0_0_0_6px_rgba(255,255,255,0.08)] md:left-1/2 md:-translate-x-1/2"></div>
-
-                <div class="md:pr-8">
-                  <div class="glass rounded-3xl p-5">
-                    <div class="flex items-center justify-between gap-4">
-                      <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                      <p class="text-xs text-slate-300">11:30</p>
-                    </div>
-
-                    <h3 class="mt-2 text-lg font-semibold">Eden Mill Distillery</h3>
-
-                    <p class="mt-2 text-sm text-slate-200">
-                      Gin Experience
-                    </p>
-
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <a
-                        class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
-                        href="https://maps.app.goo.gl/7brLzndfPkY4Ha8Q6"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        📍 View location
-                      </a>
-                      <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Dress: casual</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="hidden md:block"></div>
-              </div>
-
-              <!-- ITEM 4 (right on desktop) -->
-              <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
-
-                <div class="hidden md:block"></div>
-
-                <div class="md:pl-8">
-                  <div class="glass rounded-3xl p-5">
-                    <div class="flex items-center justify-between gap-4">
-                      <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                      <p class="text-xs text-slate-300">13:00</p>
-                    </div>
-
-                    <h3 class="mt-2 text-lg font-semibold">Lunch / Chill </h3>
-
-                    <p class="mt-2 text-sm text-slate-200">
-                      Light lunch and chill at the accommodation
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ITEM 5 (left on desktop) -->
-              <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
-
-                <div class="md:pr-8">
-                  <div class="glass rounded-3xl p-5">
-                    <div class="flex items-center justify-between gap-4">
-                      <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                      <p class="text-xs text-slate-300">19:00</p>
-                    </div>
-
-                    <h3 class="mt-2 text-lg font-semibold">Dinner</h3>
-
-                    <p class="mt-2 text-sm text-slate-200">
-                      Forgan's
-                    </p>
-
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <a
-                        class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
-                        href="https://maps.app.goo.gl/dLoE6HFbB3Ee8Ht69"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        📍 View location
-                      </a>
-                      <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Dress: casual</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="hidden md:block"></div>
-              </div>
-
-              <!-- ITEM 6 (right on desktop) -->
-              <div class="relative md:grid md:grid-cols-2 md:gap-10">
-                <div class="absolute left-6 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-white md:left-1/2 md:-translate-x-1/2"></div>
-
-                <div class="hidden md:block"></div>
-
-                <div class="md:pl-8">
-                  <div class="glass rounded-3xl p-5">
-                    <div class="flex items-center justify-between gap-4">
-                      <p class="text-xs uppercase tracking-wide text-slate-300">Sunday</p>
-                      <p class="text-xs text-slate-300">10:00</p>
-                    </div>
-
-                    <h3 class="mt-2 text-lg font-semibold">Departure</h3>
-
-                    <p class="mt-2 text-sm text-slate-200">
-                      Car pool can be arranged!
-                    </p>
-
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Checkout: 10:00</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+              <div class="hidden md:block"></div>
             </div>
+
+            <!-- ITEM 2 (right on desktop) -->
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
+              <span class="timeline-dot"></span>
+              <span class="timeline-connector md:hidden"></span>
+
+              <div class="hidden md:block"></div>
+
+              <div class="md:pl-8">
+                <div class="glass rounded-3xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                    <p class="text-xs text-slate-300">~10:00</p>
+                  </div>
+
+                  <h3 class="mt-2 text-lg font-semibold">Breakfast (or Brunch)</h3>
+
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Bring: comfy clothes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ITEM 3 (left on desktop) -->
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
+              <span class="timeline-dot"></span>
+              <span class="timeline-connector md:hidden"></span>
+
+              <div class="md:pr-8">
+                <div class="glass rounded-3xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                    <p class="text-xs text-slate-300">11:30</p>
+                  </div>
+
+                  <h3 class="mt-2 text-lg font-semibold">Eden Mill Distillery</h3>
+
+                  <p class="mt-2 text-sm text-slate-200">
+                    Gin Experience
+                  </p>
+
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <a
+                      class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
+                      href="https://maps.app.goo.gl/7brLzndfPkY4Ha8Q6"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      📍 View location
+                    </a>
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Dress: casual</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="hidden md:block"></div>
+            </div>
+
+            <!-- ITEM 4 (right on desktop) -->
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
+              <span class="timeline-dot"></span>
+              <span class="timeline-connector md:hidden"></span>
+
+              <div class="hidden md:block"></div>
+
+              <div class="md:pl-8">
+                <div class="glass rounded-3xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                    <p class="text-xs text-slate-300">13:00</p>
+                  </div>
+
+                  <h3 class="mt-2 text-lg font-semibold">Lunch / Chill</h3>
+
+                  <p class="mt-2 text-sm text-slate-200">
+                    Light lunch and chill at the accommodation
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ITEM 5 (left on desktop) -->
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
+              <span class="timeline-dot"></span>
+              <span class="timeline-connector md:hidden"></span>
+
+              <div class="md:pr-8">
+                <div class="glass rounded-3xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                    <p class="text-xs text-slate-300">19:00</p>
+                  </div>
+
+                  <h3 class="mt-2 text-lg font-semibold">Dinner</h3>
+
+                  <p class="mt-2 text-sm text-slate-200">
+                    Forgan's
+                  </p>
+
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <a
+                      class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
+                      href="https://maps.app.goo.gl/dLoE6HFbB3Ee8Ht69"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      📍 View location
+                    </a>
+                    <a
+                      class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
+                      href="https://www.forgansstandrews.co.uk/menu/forgans-main-menu.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Menu
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="hidden md:block"></div>
+            </div>
+
+            <!-- ITEM 6 (right on desktop) -->
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
+              <span class="timeline-dot"></span>
+              <span class="timeline-connector md:hidden"></span>
+
+              <div class="hidden md:block"></div>
+
+              <div class="md:pl-8">
+                <div class="glass rounded-3xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="text-xs uppercase tracking-wide text-slate-300">Sunday</p>
+                    <p class="text-xs text-slate-300">10:00</p>
+                  </div>
+
+                  <h3 class="mt-2 text-lg font-semibold">Departure</h3>
+
+                  <p class="mt-2 text-sm text-slate-200">
+                    Car pool can be arranged!
+                  </p>
+
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Checkout: 10:00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
-
 
       <footer class="py-12 text-center text-sm text-slate-400">
         Made with Love for Lucy by JC 💫
@@ -452,24 +451,6 @@
     </main>
 
     <script>
-      // Mobile menu
-      function toggleMenu() {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("menuBtn");
-        const isHidden = menu.classList.contains("hidden");
-        menu.classList.toggle("hidden");
-        btn.setAttribute("aria-expanded", String(isHidden));
-      }
-
-      function closeMenu() {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("menuBtn");
-        if (!menu.classList.contains("hidden")) {
-          menu.classList.add("hidden");
-          btn.setAttribute("aria-expanded", "false");
-        }
-      }
-
       // Copy helper
       async function copyText(text) {
         try {
@@ -505,15 +486,6 @@
         { threshold: 0.12 }
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-
-      // Optional: close mobile menu when clicking outside
-      document.addEventListener("click", (e) => {
-        const menu = document.getElementById("mobileMenu");
-        const btn = document.getElementById("menuBtn");
-        if (menu.classList.contains("hidden")) return;
-        const clickedInside = menu.contains(e.target) || btn.contains(e.target);
-        if (!clickedInside) closeMenu();
-      });
     </script>
   </body>
 </html>
