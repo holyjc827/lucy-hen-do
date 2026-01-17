@@ -479,15 +479,6 @@
             </div>
 
             <div class="flex items-center gap-3">
-              <button
-                type="button"
-                class="mag lift press rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-                data-mag
-                onclick="scrollToNextTimelineItem()"
-              >
-                Next →
-              </button>
-
               <a href="#top" class="text-sm text-white/70 underline underline-offset-4 hover:text-white">
                 Back to top
               </a>
@@ -512,7 +503,7 @@
                   data-time="Anytime"
                   data-title="Arrivals"
                   data-desc="Get settled and dinner at the accommodation!"
-                  data-location="Monksholm House (Farm)"
+                  data-location="Monksholm House"
                   data-map="https://www.google.com/maps?q=Monksholm+House"
                   data-tags="Location: Monksholm House|Parking: on-site"
                 >
@@ -551,7 +542,7 @@
                   data-time="~10:00"
                   data-title="Breakfast (or Brunch)"
                   data-desc="Slow start, coffee, and fuel up."
-                  data-location="Monksholm House (Farm)"
+                  data-location="Monksholm House"
                   data-map="https://www.google.com/maps?q=Monksholm+House"
                   data-tags="Location: Monksholm House"
                 >
@@ -626,7 +617,7 @@
                   data-time="13:00"
                   data-title="Lunch / Chill"
                   data-desc="Light lunch and chill at the accommodation."
-                  data-location="Monksholm House (Farm)"
+                  data-location="Monksholm House"
                   data-map="https://www.google.com/maps?q=Monksholm+House"
                   data-tags="Optional: walk into town|Outfit change window"
                 >
@@ -697,7 +688,7 @@
                   data-time="10:00"
                   data-title="Departure"
                   data-desc="Car pool can be arranged!"
-                  data-location="Monksholm House (Farm)"
+                  data-location="Monksholm House"
                   data-map="https://www.google.com/maps?q=Monksholm+House"
                   data-tags="Checkout: 10:00|Coordinate lifts"
                 >
@@ -779,10 +770,6 @@
               Open extra link
             </a>
           </div>
-
-          <p class="mt-4 text-xs text-white/55">
-            Tip: the timeline rail fills as you scroll ✨
-          </p>
         </div>
       </div>
     </dialog>
@@ -948,7 +935,6 @@
       /* =========================
          Hover tilt (desktop, subtle)
       ========================== */
-      const tiltCards = document.querySelectorAll(".event-card, .glass");
       tiltCards.forEach((card) => {
         let raf = null;
 
@@ -993,15 +979,6 @@
         });
       });
 
-      /* =========================
-         "Next" timeline helper
-      ========================== */
-      function scrollToNextTimelineItem() {
-        const viewMid = window.innerHeight * 0.52;
-        const next = items.find((el) => el.getBoundingClientRect().top > viewMid);
-        (next || items[items.length - 1]).scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-      window.scrollToNextTimelineItem = scrollToNextTimelineItem;
       window.closeSheet = closeSheet;
     </script>
   </body>
