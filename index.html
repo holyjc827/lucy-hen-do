@@ -31,7 +31,14 @@
       }
 
       html { scroll-behavior: smooth; }
-      html, body { overflow-x: hidden; }
+      html, body {
+        min-height: 100%;
+        background: #050612; /* matches your darkest theme color */
+      }
+
+      body {
+        background-attachment: fixed; /* helps some mobile browsers */
+      }      
       section { scroll-margin-top: calc(var(--nav-h) + 16px); }
 
       /* iOS safe-area support */
