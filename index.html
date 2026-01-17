@@ -324,6 +324,58 @@
         opacity: 1;
       }
 
+      /* ===== Bottom sheet: force consistent text + links ===== */
+      .sheet-card{
+        color: rgba(255,255,255,.92);            /* <-- fixes black title */
+      }
+
+      .sheet-card a,
+      .sheet-card button{
+        color: inherit;                          /* <-- prevents UA link colors */
+      }
+
+      #sheetMeta{ color: rgba(255,255,255,.72); }
+      #sheetDesc, #sheetLoc{ color: rgba(255,255,255,.82); }
+      #sheetTitle{ color: rgba(255,255,255,.96); }
+
+      /* Unified button system for the sheet */
+      .sheet-btn{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        width: 100%;
+        padding: .85rem 1rem;
+        border-radius: 999px;
+        font-size: .95rem;
+        font-weight: 600;
+        transition: transform 160ms ease, filter 160ms ease, background 160ms ease, border-color 160ms ease;
+        will-change: transform;
+      }
+
+      .sheet-btn:active{ transform: translateY(1px) scale(.99); }
+
+      .sheet-btn-primary{
+        background: linear-gradient(135deg,
+          hsla(var(--a2), .95),
+          hsla(var(--a1), .85));
+        color: #050612; /* dark text on bright button */
+        box-shadow: 0 16px 50px rgba(0,0,0,.45);
+      }
+
+      .sheet-btn-primary:hover{ filter: brightness(1.05); }
+
+      .sheet-btn-secondary{
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.14);
+        color: rgba(255,255,255,.90);           /* <-- fixes black “Menu” */
+      }
+
+      .sheet-btn-secondary:hover{
+        background: rgba(255,255,255,.13);
+        border-color: rgba(255,255,255,.20);
+      }
+
       /* =========================
          Reduced motion
       ========================== */
@@ -408,15 +460,6 @@
               Go to plan
               <span class="text-base">→</span>
             </a>
-
-            <button
-              type="button"
-              class="mag lift press inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-5 py-3 text-sm hover:bg-white/15"
-              data-mag
-              onclick="toast('Tip: Tap a timeline card for a slick details sheet ✨')"
-            >
-              What’s interactive?
-            </button>
           </div>
         </div>
       </section>
