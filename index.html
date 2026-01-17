@@ -9,25 +9,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-      /* Visual style */
-      .glass {
-        backdrop-filter: blur(12px);
-        background: rgba(2, 6, 23, 0.48);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      }
-
-      /* Scroll reveal animation */
-      .reveal {
-        opacity: 0;
-        transform: translateY(10px);
-        transition: opacity 600ms ease, transform 600ms ease;
-      }
-      .reveal.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
+      /* =========================
+         Base / visual style
+      ========================== */
       :root { --nav-h: 76px; }
 
       html { scroll-behavior: smooth; }
@@ -49,15 +33,70 @@
         bottom: max(16px, env(safe-area-inset-bottom));
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        html { scroll-behavior: auto; }
-        .reveal { transition: none; transform: none; opacity: 1; }
+      /* Glass */
+      .glass {
+        backdrop-filter: blur(12px);
+        background: rgba(2, 6, 23, 0.48);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
       }
 
-      /* ===== Timeline (fixed for mobile) ===== */
-      .timeline {
-        position: relative;
+      /* =========================
+         Motion system
+      ========================== */
+      /* Scroll reveal */
+      .reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 650ms cubic-bezier(.2,.8,.2,1),
+          transform 650ms cubic-bezier(.2,.8,.2,1);
+        transition-delay: var(--d, 0ms);
+        will-change: transform, opacity;
       }
+      .reveal.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Subtle hover lift (micro-interaction) */
+      .lift {
+        transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+        will-change: transform;
+      }
+      .lift:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255,255,255,.18);
+      }
+
+      /* Press feedback */
+      .press:active { transform: translateY(1px) scale(.99); }
+
+      /* Scroll progress bar */
+      #progress {
+        transform: scaleX(0);
+        transform-origin: left;
+        will-change: transform;
+      }
+
+      /* Aurora background blob */
+      .aurora {
+        background:
+          radial-gradient(circle at 30% 30%, rgba(255,255,255,.14), transparent 55%),
+          radial-gradient(circle at 70% 60%, rgba(255,255,255,.08), transparent 60%);
+        filter: blur(30px);
+        opacity: .55;
+        animation: drift 10s ease-in-out infinite;
+      }
+      @keyframes drift {
+        0%,100% { transform: translateX(-50%) translateY(0) scale(1); }
+        50% { transform: translateX(-48%) translateY(18px) scale(1.06); }
+      }
+
+      /* =========================
+         Timeline (mobile rail + desktop center)
+      ========================== */
+      .timeline { position: relative; }
 
       /* Left rail (mobile) */
       .timeline::before {
@@ -65,7 +104,7 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        left: 24px; /* sits nicely in the mobile gutter */
+        left: 24px;
         width: 1px;
         background: rgba(255,255,255,.14);
       }
@@ -86,7 +125,9 @@
         border-radius: 999px;
         background: rgba(255,255,255,.95);
         box-shadow: 0 0 0 6px rgba(255,255,255,.08);
-        z-index: 30; /* IMPORTANT: above cards */
+        z-index: 30;
+        opacity: .65;
+        transition: opacity 250ms ease, transform 250ms ease;
       }
 
       .timeline-connector {
@@ -99,43 +140,70 @@
         z-index: 20;
       }
 
+      /* Active timeline item */
+      @keyframes pulse-dot {
+        0%   { box-shadow: 0 0 0 6px rgba(255,255,255,.10); }
+        50%  { box-shadow: 0 0 0 12px rgba(255,255,255,.25); }
+        100% { box-shadow: 0 0 0 6px rgba(255,255,255,.10); }
+      }
+      .timeline-item.is-active .timeline-dot {
+        opacity: 1;
+        animation: pulse-dot 2.2s ease-in-out infinite;
+      }
+
       /* Desktop: center rail + alternating cards */
       @media (min-width: 768px) {
-        .timeline::before {
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        .timeline-item {
-          padding-left: 0;
-        }
-        .timeline-dot {
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        .timeline-connector {
-          display: none;
-        }
+        .timeline::before { left: 50%; transform: translateX(-50%); }
+        .timeline-item { padding-left: 0; }
+        .timeline-dot { left: 50%; transform: translateX(-50%); }
+        .timeline-connector { display: none; }
       }
 
-      @keyframes pulse-dot {
-        0% {
-          box-shadow: 0 0 0 6px rgba(255,255,255,.10);
-        }
-        50% {
-          box-shadow: 0 0 0 12px rgba(255,255,255,.25);
-        }
-        100% {
-          box-shadow: 0 0 0 6px rgba(255,255,255,.10);
-        }
+      /* =========================
+         Accordion
+      ========================== */
+      .accordion-body {
+        overflow: hidden;
+        max-height: 0px;
+        opacity: 0;
+        transition: max-height 520ms cubic-bezier(.2,.8,.2,1), opacity 320ms ease;
+        will-change: max-height, opacity;
+      }
+      .accordion-open .accordion-body {
+        opacity: 1;
+      }
+      .chev {
+        transition: transform 220ms ease, opacity 220ms ease;
+        opacity: .75;
+      }
+      .accordion-open .chev {
+        transform: rotate(180deg);
+        opacity: 1;
       }
 
-      .timeline-dot {
-        animation: pulse-dot 2.2s ease-in-out infinite;
+      /* =========================
+         Reduced motion
+      ========================== */
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .reveal { transition: none; transform: none; opacity: 1; }
+        #progress { display: none; }
+        .aurora { animation: none; }
+        .timeline-item.is-active .timeline-dot { animation: none; }
+        .lift, .press, .chev, .accordion-body { transition: none; }
       }
     </style>
   </head>
 
   <body class="min-h-screen bg-slate-950 text-slate-100">
+    <!-- Scroll progress -->
+    <div id="progress" class="fixed left-0 top-0 z-[60] h-1 w-full bg-white/70"></div>
+
+    <!-- Aurora background blob (behind everything) -->
+    <div class="pointer-events-none fixed inset-0 -z-20 overflow-hidden">
+      <div class="aurora absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full"></div>
+    </div>
+
     <!-- Hero background image -->
     <div class="pointer-events-none fixed left-0 right-0 top-0 -z-10 h-[100svh] md:h-[85vh]">
       <img
@@ -150,13 +218,16 @@
     <!-- Nav -->
     <header class="sticky top-0 z-50 bg-slate-950/60 backdrop-blur safe-top">
       <nav class="mx-auto flex max-w-6xl items-center justify-between safe-x py-4">
-        <a href="#top" class="flex items-center gap-2">
+        <a href="#top" class="flex items-center gap-2 lift press rounded-2xl px-1">
           <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10">🐔</span>
           <span class="text-lg font-semibold tracking-tight">Lucy's Hen Do</span>
         </a>
 
         <div class="flex items-center gap-2">
-          <a href="#timeline" class="rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15">
+          <a
+            href="#timeline"
+            class="lift press rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+          >
             See plan
           </a>
         </div>
@@ -166,8 +237,8 @@
     <!-- Page content -->
     <main id="top" class="mx-auto max-w-6xl safe-x pt-24 md:pt-16">
       <!-- Hero card -->
-      <section class="reveal">
-        <div class="glass rounded-[2rem] p-6 md:p-12 shadow-xl shadow-black/30">
+      <section class="reveal" style="--d: 0ms">
+        <div class="glass lift rounded-[2rem] p-6 md:p-12 shadow-xl shadow-black/30">
           <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-300">
             <span class="inline-flex items-center gap-2">
               📍 <span>St Andrews, Scotland</span>
@@ -189,7 +260,10 @@
           </p>
 
           <div class="mt-7 flex flex-col gap-3 sm:flex-row">
-            <a href="#timeline" class="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 hover:opacity-95">
+            <a
+              href="#timeline"
+              class="lift press rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 hover:opacity-95"
+            >
               Go to plan
             </a>
           </div>
@@ -198,14 +272,14 @@
 
       <!-- Quick cards -->
       <section class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div class="glass reveal rounded-3xl p-6">
+        <div class="glass reveal lift rounded-3xl p-6" style="--d: 80ms">
           <p class="text-xs uppercase tracking-wide text-slate-300">Time</p>
           <p class="mt-2 text-lg font-semibold">Friday, 29-05-2026</p>
           <p class="mt-2 text-lg font-semibold"> ~ </p>
           <p class="mt-2 text-lg font-semibold">Sunday, 31-05-2026</p>
         </div>
 
-        <div class="glass reveal rounded-3xl p-6">
+        <div class="glass reveal lift rounded-3xl p-6" style="--d: 160ms">
           <p class="text-xs uppercase tracking-wide text-slate-300">Accommodation</p>
           <p class="mt-2 text-lg font-semibold">Monksholm House (Farm)</p>
 
@@ -213,13 +287,13 @@
             href="https://www.google.com/maps?q=Monksholm+House"
             target="_blank"
             rel="noopener noreferrer"
-            class="mt-3 flex w-full items-center justify-center rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+            class="lift press mt-3 flex w-full items-center justify-center rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
           >
             📍 Open in Google Maps
           </a>
         </div>
 
-        <div class="glass reveal rounded-3xl p-6">
+        <div class="glass reveal lift rounded-3xl p-6" style="--d: 240ms">
           <p class="text-xs uppercase tracking-wide text-slate-300">Group chat</p>
 
           <div class="mt-3 flex flex-col gap-2">
@@ -227,29 +301,30 @@
               href="https://chat.whatsapp.com/GlkL4GUrRPDFfYRXXgr3iG"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex w-full items-center justify-center rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-95"
+              class="lift press flex w-full items-center justify-center rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-95"
             >
               Join WhatsApp group
             </a>
 
             <button
-              class="w-full rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+              class="lift press w-full rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
               onclick="copyText('https://chat.whatsapp.com/GlkL4GUrRPDFfYRXXgr3iG')"
+              type="button"
             >
               Copy invite link
             </button>
           </div>
         </div>
 
-        <div class="glass reveal rounded-3xl p-6">
-          <p class="text-xs uppercase tracking-wide text-slate-300">Planning & Tasks </p>
+        <div class="glass reveal lift rounded-3xl p-6" style="--d: 320ms">
+          <p class="text-xs uppercase tracking-wide text-slate-300">Planning & Tasks</p>
 
           <div class="mt-3 flex flex-col gap-2">
             <a
               href="https://docs.google.com/document/d/15LhYNawj_2yFaHf8a3ZUqgoM15AZ2Qbg5-xkfQ5DWkU/edit?tab=t.0"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex w-full items-center justify-center rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-95"
+              class="lift press flex w-full items-center justify-center rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 hover:opacity-95"
             >
               Planning Idea
             </a>
@@ -258,7 +333,7 @@
               href="https://docs.google.com/document/d/15LhYNawj_2yFaHf8a3ZUqgoM15AZ2Qbg5-xkfQ5DWkU/edit?tab=t.2ilkgnlcktm4#heading=h.4s63avcak9o"
               target="_blank"
               rel="noopener noreferrer"
-              class="mt-3 flex w-full items-center justify-center rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+              class="lift press mt-3 flex w-full items-center justify-center rounded-2xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
             >
               Task List
             </a>
@@ -267,7 +342,7 @@
       </section>
 
       <!-- Timeline section -->
-      <section id="timeline" class="mt-10 reveal">
+      <section id="timeline" class="mt-10 reveal" style="--d: 0ms">
         <div class="glass rounded-3xl p-6 md:p-10">
           <div class="flex items-end justify-between gap-4">
             <div>
@@ -285,26 +360,39 @@
           <!-- Timeline -->
           <div class="timeline mt-8 space-y-6">
             <!-- ITEM 1 (left on desktop) -->
-            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
-              <span class="timeline-dot"></span>
-              <span class="timeline-connector md:hidden"></span>
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10" data-item>
+              <span class="timeline-dot" aria-hidden="true"></span>
+              <span class="timeline-connector md:hidden" aria-hidden="true"></span>
 
               <div class="md:pr-8">
-                <div class="glass rounded-3xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="text-xs uppercase tracking-wide text-slate-300">Friday</p>
-                    <p class="text-xs text-slate-300">Anytime</p>
+                <div class="glass lift press rounded-3xl p-5 cursor-pointer select-none" data-accordion>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="flex items-center gap-3">
+                        <p class="text-xs uppercase tracking-wide text-slate-300">Friday</p>
+                        <span class="text-slate-400">•</span>
+                        <p class="text-xs text-slate-300">Anytime</p>
+                      </div>
+                      <h3 class="mt-2 text-lg font-semibold">Arrivals</h3>
+                      <p class="mt-2 text-sm text-slate-200">Get settled and dinner at the accommodation!</p>
+                    </div>
+
+                    <svg class="chev mt-1 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
 
-                  <h3 class="mt-2 text-lg font-semibold">Arrivals</h3>
-
-                  <p class="mt-2 text-sm text-slate-200">
-                    Get settled and dinner at the accommodation!
-                  </p>
-
                   <div class="mt-4 flex flex-wrap gap-2">
-                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Location: Monksholm House </span>
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Location: Monksholm House</span>
                     <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Parking: on-site</span>
+                  </div>
+
+                  <div class="accordion-body mt-3">
+                    <div class="pt-3 border-t border-white/10">
+                      <p class="text-sm text-slate-200">
+                        If you're arriving late, message the group chat so we can coordinate dinner / keys.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -313,49 +401,71 @@
             </div>
 
             <!-- ITEM 2 (right on desktop) -->
-            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
-              <span class="timeline-dot"></span>
-              <span class="timeline-connector md:hidden"></span>
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10" data-item>
+              <span class="timeline-dot" aria-hidden="true"></span>
+              <span class="timeline-connector md:hidden" aria-hidden="true"></span>
 
               <div class="hidden md:block"></div>
 
               <div class="md:pl-8">
-                <div class="glass rounded-3xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                    <p class="text-xs text-slate-300">~10:00</p>
+                <div class="glass lift press rounded-3xl p-5 cursor-pointer select-none" data-accordion>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="flex items-center gap-3">
+                        <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                        <span class="text-slate-400">•</span>
+                        <p class="text-xs text-slate-300">~10:00</p>
+                      </div>
+                      <h3 class="mt-2 text-lg font-semibold">Breakfast (or Brunch)</h3>
+                      <p class="mt-2 text-sm text-slate-200">Slow start, coffee, and fuel up.</p>
+                    </div>
+
+                    <svg class="chev mt-1 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
 
-                  <h3 class="mt-2 text-lg font-semibold">Breakfast (or Brunch)</h3>
-
                   <div class="mt-4 flex flex-wrap gap-2">
-                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Location: Monksholm House </span>
+                    <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Location: Monksholm House</span>
+                  </div>
+
+                  <div class="accordion-body mt-3">
+                    <div class="pt-3 border-t border-white/10">
+                      <p class="text-sm text-slate-200">
+                        If you have dietary bits (veggie/vegan/gluten-free), drop it in the chat so we can plan.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- ITEM 3 (left on desktop) -->
-            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
-              <span class="timeline-dot"></span>
-              <span class="timeline-connector md:hidden"></span>
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10" data-item>
+              <span class="timeline-dot" aria-hidden="true"></span>
+              <span class="timeline-connector md:hidden" aria-hidden="true"></span>
 
               <div class="md:pr-8">
-                <div class="glass rounded-3xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                    <p class="text-xs text-slate-300">11:30</p>
+                <div class="glass lift press rounded-3xl p-5 cursor-pointer select-none" data-accordion>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="flex items-center gap-3">
+                        <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                        <span class="text-slate-400">•</span>
+                        <p class="text-xs text-slate-300">11:30</p>
+                      </div>
+                      <h3 class="mt-2 text-lg font-semibold">Eden Mill Distillery</h3>
+                      <p class="mt-2 text-sm text-slate-200">Gin Experience</p>
+                    </div>
+
+                    <svg class="chev mt-1 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
-
-                  <h3 class="mt-2 text-lg font-semibold">Eden Mill Distillery</h3>
-
-                  <p class="mt-2 text-sm text-slate-200">
-                    Gin Experience
-                  </p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     <a
-                      class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
+                      class="lift press rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
                       href="https://maps.app.goo.gl/7brLzndfPkY4Ha8Q6"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -364,6 +474,14 @@
                     </a>
                     <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Dress: casual</span>
                   </div>
+
+                  <div class="accordion-body mt-3">
+                    <div class="pt-3 border-t border-white/10">
+                      <p class="text-sm text-slate-200">
+                        Arrive 10 minutes early. Bring ID just in case. We'll head back after.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -371,49 +489,67 @@
             </div>
 
             <!-- ITEM 4 (right on desktop) -->
-            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
-              <span class="timeline-dot"></span>
-              <span class="timeline-connector md:hidden"></span>
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10" data-item>
+              <span class="timeline-dot" aria-hidden="true"></span>
+              <span class="timeline-connector md:hidden" aria-hidden="true"></span>
 
               <div class="hidden md:block"></div>
 
               <div class="md:pl-8">
-                <div class="glass rounded-3xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                    <p class="text-xs text-slate-300">13:00</p>
+                <div class="glass lift press rounded-3xl p-5 cursor-pointer select-none" data-accordion>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="flex items-center gap-3">
+                        <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                        <span class="text-slate-400">•</span>
+                        <p class="text-xs text-slate-300">13:00</p>
+                      </div>
+                      <h3 class="mt-2 text-lg font-semibold">Lunch / Chill</h3>
+                      <p class="mt-2 text-sm text-slate-200">Light lunch and chill at the accommodation.</p>
+                    </div>
+
+                    <svg class="chev mt-1 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
 
-                  <h3 class="mt-2 text-lg font-semibold">Lunch / Chill</h3>
-
-                  <p class="mt-2 text-sm text-slate-200">
-                    Light lunch and chill at the accommodation
-                  </p>
+                  <div class="accordion-body mt-3">
+                    <div class="pt-3 border-t border-white/10">
+                      <p class="text-sm text-slate-200">
+                        Perfect time for showers / outfit changes / a quick walk into town if anyone wants.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- ITEM 5 (left on desktop) -->
-            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
-              <span class="timeline-dot"></span>
-              <span class="timeline-connector md:hidden"></span>
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10" data-item>
+              <span class="timeline-dot" aria-hidden="true"></span>
+              <span class="timeline-connector md:hidden" aria-hidden="true"></span>
 
               <div class="md:pr-8">
-                <div class="glass rounded-3xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
-                    <p class="text-xs text-slate-300">19:00</p>
+                <div class="glass lift press rounded-3xl p-5 cursor-pointer select-none" data-accordion>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="flex items-center gap-3">
+                        <p class="text-xs uppercase tracking-wide text-slate-300">Saturday</p>
+                        <span class="text-slate-400">•</span>
+                        <p class="text-xs text-slate-300">19:00</p>
+                      </div>
+                      <h3 class="mt-2 text-lg font-semibold">Dinner</h3>
+                      <p class="mt-2 text-sm text-slate-200">Forgan's</p>
+                    </div>
+
+                    <svg class="chev mt-1 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
-
-                  <h3 class="mt-2 text-lg font-semibold">Dinner</h3>
-
-                  <p class="mt-2 text-sm text-slate-200">
-                    Forgan's
-                  </p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     <a
-                      class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
+                      class="lift press rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
                       href="https://maps.app.goo.gl/dLoE6HFbB3Ee8Ht69"
                       target="_blank"
                       rel="noopener noreferrer"
@@ -421,13 +557,21 @@
                       📍 View location
                     </a>
                     <a
-                      class="rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
+                      class="lift press rounded-2xl bg-white/10 px-3 py-2 text-xs hover:bg-white/15"
                       href="https://www.forgansstandrews.co.uk/menu/forgans-main-menu.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       Menu
                     </a>
+                  </div>
+
+                  <div class="accordion-body mt-3">
+                    <div class="pt-3 border-t border-white/10">
+                      <p class="text-sm text-slate-200">
+                        If anyone wants to taxi-share, we’ll coordinate in the group chat after lunch.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -436,32 +580,44 @@
             </div>
 
             <!-- ITEM 6 (right on desktop) -->
-            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10">
-              <span class="timeline-dot"></span>
-              <span class="timeline-connector md:hidden"></span>
+            <div class="timeline-item md:grid md:grid-cols-2 md:gap-10" data-item>
+              <span class="timeline-dot" aria-hidden="true"></span>
+              <span class="timeline-connector md:hidden" aria-hidden="true"></span>
 
               <div class="hidden md:block"></div>
 
               <div class="md:pl-8">
-                <div class="glass rounded-3xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="text-xs uppercase tracking-wide text-slate-300">Sunday</p>
-                    <p class="text-xs text-slate-300">10:00</p>
+                <div class="glass lift press rounded-3xl p-5 cursor-pointer select-none" data-accordion>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="flex items-center gap-3">
+                        <p class="text-xs uppercase tracking-wide text-slate-300">Sunday</p>
+                        <span class="text-slate-400">•</span>
+                        <p class="text-xs text-slate-300">10:00</p>
+                      </div>
+                      <h3 class="mt-2 text-lg font-semibold">Departure</h3>
+                      <p class="mt-2 text-sm text-slate-200">Car pool can be arranged!</p>
+                    </div>
+
+                    <svg class="chev mt-1 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
-
-                  <h3 class="mt-2 text-lg font-semibold">Departure</h3>
-
-                  <p class="mt-2 text-sm text-slate-200">
-                    Car pool can be arranged!
-                  </p>
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">Checkout: 10:00</span>
                   </div>
+
+                  <div class="accordion-body mt-3">
+                    <div class="pt-3 border-t border-white/10">
+                      <p class="text-sm text-slate-200">
+                        If you need a lift, pop your rough departure time in the chat and we’ll match people up.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -507,6 +663,61 @@
         { threshold: 0.12 }
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      // Scroll progress bar
+      const progress = document.getElementById("progress");
+      window.addEventListener(
+        "scroll",
+        () => {
+          const h = document.documentElement;
+          const max = h.scrollHeight - h.clientHeight;
+          const p = max > 0 ? h.scrollTop / max : 0;
+          progress.style.transform = `scaleX(${p})`;
+        },
+        { passive: true }
+      );
+
+      // Accordion behavior (tap timeline cards for details)
+      function setAccordionOpen(card, open) {
+        const body = card.querySelector(".accordion-body");
+        if (!body) return;
+
+        if (open) {
+          card.classList.add("accordion-open");
+          body.style.maxHeight = body.scrollHeight + "px";
+        } else {
+          card.classList.remove("accordion-open");
+          body.style.maxHeight = "0px";
+        }
+      }
+
+      document.querySelectorAll("[data-accordion]").forEach((card) => {
+        // Ensure starting closed
+        setAccordionOpen(card, false);
+
+        card.addEventListener("click", () => {
+          const isOpen = card.classList.contains("accordion-open");
+          setAccordionOpen(card, !isOpen);
+        });
+      });
+
+      // Auto-highlight active timeline item + dot as you scroll
+      const items = document.querySelectorAll("[data-item]");
+      const itemIO = new IntersectionObserver(
+        (entries) => {
+          // choose the most visible intersecting entry
+          const visible = entries.filter((e) => e.isIntersecting);
+          if (!visible.length) return;
+
+          visible.sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0));
+          const top = visible[0].target;
+
+          items.forEach((i) => i.classList.remove("is-active"));
+          top.classList.add("is-active");
+        },
+        { threshold: [0.2, 0.35, 0.5, 0.65] }
+      );
+      items.forEach((el) => itemIO.observe(el));
     </script>
   </body>
 </html>
