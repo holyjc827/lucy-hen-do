@@ -116,6 +116,22 @@
           display: none;
         }
       }
+
+      @keyframes pulse-dot {
+        0% {
+          box-shadow: 0 0 0 6px rgba(255,255,255,.10);
+        }
+        50% {
+          box-shadow: 0 0 0 12px rgba(255,255,255,.25);
+        }
+        100% {
+          box-shadow: 0 0 0 6px rgba(255,255,255,.10);
+        }
+      }
+
+      .timeline-dot {
+        animation: pulse-dot 2.2s ease-in-out infinite;
+      }
     </style>
   </head>
 
